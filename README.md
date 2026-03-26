@@ -1,110 +1,39 @@
 # SKFS LoRaWAN Security Lab
 
-This repository is prepared so you can download it directly from GitHub and start the demo with one command.
+SKFS LoRaWAN Security Lab is a Docker-based demo environment for visualizing LoRaWAN-style telemetry and security events. After startup, the system automatically builds the required services, seeds demo data, and exposes a dashboard, a security page, API endpoints, and pgAdmin. No manual scripts are required after the containers are started.
 
-## Default plug-and-play demo
+## Setup and run
 
-The default stack does **not** require ChirpStack credentials or manual Python scripts.
+1. `wsl --update`  
+   Updates Windows Subsystem for Linux so Docker Desktop can use an up-to-date WSL backend.
 
-It starts automatically:
-- SKFS API
-- SKFS web dashboard
-- PostgreSQL / TimescaleDB
-- pgAdmin
-- Mosquitto MQTT broker
-- demo history seeding
-- live telemetry publishing every 30 seconds
-- automatic MIC / replay / ACK-failure injection events
+2. `winget install --id Git.Git -e --source winget`  
+   Installs Git for Windows from the Windows package manager.
 
-## Start
+3. `cd "$HOME\Downloads"`  
+   Moves PowerShell to the Downloads folder so the project is cloned in an easy-to-find location.
 
-```bash
-docker compose up --build
-```
+4. `git clone https://github.com/BorisKisyov/LoRa-LoRaWAN-Security-SKFS.git`  
+   Downloads the SKFS project from GitHub to your computer.
 
-Then open:
+5. `cd ".\LoRa-LoRaWAN-Security-SKFS"`  
+   Opens the project folder so the Docker command runs in the correct directory.
+
+6. `docker compose up --build -d`  
+   Builds the images, starts the containers in the background, and launches the full SKFS demo stack.
+
+## Open in browser
+
 - Dashboard: `http://localhost:8081`
-- API health: `http://localhost:8000/health`
-- Security summary: `http://localhost:8000/security/summary`
-- Raw LoRa AES/MIC/replay demo JSON: `http://localhost:8000/security/raw-demo`
+- Security page: `http://localhost:8081/security`
+- Latest data endpoint: `http://localhost:8000/latest?limit=20`
+- Security summary endpoint: `http://localhost:8000/security/summary`
+- Raw demo endpoint: `http://localhost:8000/security/raw-demo`
 - pgAdmin: `http://localhost:5050`
 
-Default pgAdmin login:
-- email: `admin@skfs.local`
-- password: `admin`
+## Database / pgAdmin credentials
 
-## Fresh GitHub download
+- Email: `admin@skfs.com`
+- Password: `admin`
 
-You can run the default demo directly after downloading the repository ZIP from GitHub.
-No `.env` file is required for the default demo because Docker Compose provides defaults.
-
-Optional: if you want to customize values, copy `.env.example` to `.env`.
-
-## Optional full ChirpStack stack
-
-If you also want the reference ChirpStack services, start them with:
-
-```bash
-docker compose --profile full-lorawan up --build
-```
-
-This additionally starts:
-- ChirpStack
-- ChirpStack REST API
-- ChirpStack Gateway Bridge
-- ChirpStack Postgres
-- ChirpStack Redis
-- ChirpStack Simulator container
-
-Important for the optional full stack:
-- the default demo works without ChirpStack bootstrap;
-- the optional simulator still needs valid `CHIRPSTACK_API_KEY` and `CHIRPSTACK_TENANT_ID` in `.env`.
-
-## What the automatic demo does
-
-### Normal telemetry
-- seeds demo history into the database first
-- publishes join events for 5 demo devices
-- publishes uplink data every 30 seconds
-- stores measurements for the dashboard
-- publishes periodic status and ACK events
-
-### Security / attack simulation
-Every few publish cycles it automatically injects:
-- duplicate uplink event for replay detection
-- `UPLINK_MIC` error log for MIC failure demonstration
-- `FCNT_REPLAY` warning log for replay demonstration
-- failed ACK event for downlink-failure demonstration
-
-These appear in:
-- `http://localhost:8081/security`
-- `http://localhost:8000/security/events?limit=50`
-- `http://localhost:8000/security/summary`
-
-## Stop
-
-```bash
-docker compose down
-```
-
-Full reset:
-
-```bash
-docker compose down -v
-```
-
-## Logs
-
-```bash
-docker compose logs -f vb-api
-docker compose logs -f demo-publisher
-docker compose logs -f vb-web
-```
-
-## Notes for the report
-
-This package demonstrates two security layers:
-- event-driven LoRaWAN-style security monitoring in the SKFS stack
-- raw LoRa AES + MIC + replay logic at `GET /security/raw-demo`
-
-It is a controlled lab simulation, not SDR/RF-layer testing.
+The PostgreSQL server is already preconfigured in pgAdmin as `SKFS DB`.
