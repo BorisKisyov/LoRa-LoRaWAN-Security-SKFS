@@ -105,6 +105,22 @@ function formatTs(ts: string) {
   return ts.replace("T", " ").replace("+00:00", " UTC").slice(0, 23);
 }
 
+function compactDisplayId(value?: string | null) {
+  if (!value) return "-";
+  const v = String(value);
+
+  if (/^\d+$/.test(v)) {
+    const trimmed = v.replace(/^0+/, "");
+    return trimmed || "0";
+  }
+
+  return v.replace(/(^|\D)0+(\d+$)/, "$1$2");
+}
+
+function displayDevice(primary?: string | null, fallback?: string | null) {
+  return compactDisplayId(primary || fallback);
+}
+
 function badge(text: string, bg: string, fg = "#111827") {
   return (
     <span
@@ -137,7 +153,7 @@ export default async function SecurityPage() {
   const [{ summary, devices }, events] = await Promise.all([getSecuritySummary(), getSecurityEvents()]);
 
   return (
-    <div suppressHydrationWarning style={{ padding: 20, display: "grid", gap: 18 }}>
+    <div style={{ padding: 20, display: "grid", gap: 18 }}>
       <AutoRefresh intervalMs={10000} />
 
       <div style={{ fontSize: 12, color: "#6b7280" }}>Auto-refresh every 10 seconds</div>
@@ -176,12 +192,11 @@ export default async function SecurityPage() {
                 <th style={{ padding: "10px 8px" }}>Updated</th>
               </tr>
             </thead>
-            <tbody suppressHydrationWarning>
+            <tbody>
               {devices.map((d) => (
                 <tr key={d.dev_eui} style={{ borderBottom: "1px solid #f3f4f6" }}>
-                  <td style={{ padding: "10px 8px" }}>
-                    <div style={{ fontWeight: 700 }}>{d.device_name || d.dev_eui}</div>
-                    <div style={{ color: "#6b7280", fontSize: 12 }}>{d.dev_eui}</div>
+                  <td style={{ padding: "10px 8px", fontWeight: 700 }} title={d.device_name || d.dev_eui || ""}>
+                    {displayDevice(d.device_name, d.dev_eui)}
                   </td>
                   <td style={{ padding: "10px 8px" }}>{d.application_name || "-"}</td>
                   <td style={{ padding: "10px 8px" }}>{d.join_count ?? 0}</td>
@@ -221,7 +236,7 @@ export default async function SecurityPage() {
                 <th style={{ padding: "10px 8px" }}>Description</th>
               </tr>
             </thead>
-            <tbody suppressHydrationWarning>
+            <tbody>
               {events.map((e) => (
                 <tr key={e.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
                   <td style={{ padding: "10px 8px", whiteSpace: "nowrap" }}>{formatTs(e.observed_at)}</td>
@@ -229,10 +244,10 @@ export default async function SecurityPage() {
                   <td style={{ padding: "10px 8px" }}>{e.event_level || "-"}</td>
                   <td style={{ padding: "10px 8px" }}>{failureBadge(e.failure_class)}</td>
                   <td style={{ padding: "10px 8px" }}>
-                    <div>{e.device_name || e.dev_eui || "-"}</div>
+                    <div title={e.device_name || e.dev_eui || ""}>{displayDevice(e.device_name, e.dev_eui)}</div>
                     <div style={{ color: "#6b7280", fontSize: 12 }}>{e.application_name || "-"}</div>
                   </td>
-                  <td style={{ padding: "10px 8px" }}>{e.gateway_id || "-"}</td>
+                  <td style={{ padding: "10px 8px" }} title={e.gateway_id || ""}>{compactDisplayId(e.gateway_id)}</td>
                   <td style={{ padding: "10px 8px" }}>{e.mic_status || "unknown"}</td>
                   <td style={{ padding: "10px 8px" }}>{e.replay_suspected ? "yes" : "no"}</td>
                   <td style={{ padding: "10px 8px" }}>{e.battery_level ?? "-"} / {e.margin ?? "-"}</td>
