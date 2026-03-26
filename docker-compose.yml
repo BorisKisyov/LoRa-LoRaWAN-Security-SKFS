@@ -66,7 +66,7 @@ services:
     environment:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-postgres}@vb-db:5432/${POSTGRES_DB:-visionbyte}
       CHIRPSTACK_MQTT_ENABLED: "false"
-    command: ["python", "app/seed_demo.py"]
+    command: ["python", "-m", "app.seed_demo"]
     restart: "no"
     depends_on:
       vb-db:
@@ -207,3 +207,4 @@ volumes:
   vb_pgadmin:
   chirpstack_postgres:
   chirpstack_redis:
+

@@ -1,7 +1,6 @@
 import base64
 import json
 import os
-import socket
 import time
 import uuid
 from datetime import datetime, timezone
@@ -85,12 +84,21 @@ def wait_for_http(url: str, timeout_s: int) -> None:
 def wait_for_mqtt(host: str, port: int, timeout_s: int) -> None:
     deadline = time.time() + timeout_s
     while time.time() < deadline:
+        client = None
         try:
-            with socket.create_connection((host, port), timeout=5):
-                print(f"[demo-publisher] MQTT ready at {host}:{port}")
-                return
-        except OSError:
+            client = mqtt.Client(client_id=f"visionbyte-mqtt-check-{uuid.uuid4().hex[:8]}")
+            client.connect(host, port, 10)
+            client.disconnect()
+            print(f"[demo-publisher] MQTT ready at {host}:{port}")
+            return
+        except Exception:
             time.sleep(2)
+        finally:
+            if client is not None:
+                try:
+                    client.disconnect()
+                except Exception:
+                    pass
     raise RuntimeError(f"Timed out waiting for MQTT at {host}:{port}")
 
 

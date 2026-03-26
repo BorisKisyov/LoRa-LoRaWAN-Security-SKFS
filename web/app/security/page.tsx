@@ -62,16 +62,24 @@ type SecurityEvent = {
 
 async function getSecuritySummary(): Promise<{ summary: SecuritySummary; devices: SecurityDevice[] }> {
   const base = process.env.API_INTERNAL_URL || "http://vb-api:8000";
-  const res = await fetch(`${base}/security/summary`, { cache: "no-store" });
-  if (!res.ok) return { summary: {}, devices: [] };
-  return res.json();
+  try {
+    const res = await fetch(`${base}/security/summary`, { cache: "no-store" });
+    if (!res.ok) return { summary: {}, devices: [] };
+    return res.json();
+  } catch {
+    return { summary: {}, devices: [] };
+  }
 }
 
 async function getSecurityEvents(): Promise<SecurityEvent[]> {
   const base = process.env.API_INTERNAL_URL || "http://vb-api:8000";
-  const res = await fetch(`${base}/security/events?limit=50`, { cache: "no-store" });
-  if (!res.ok) return [];
-  return res.json();
+  try {
+    const res = await fetch(`${base}/security/events?limit=50`, { cache: "no-store" });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }
 
 function cardStyle() {

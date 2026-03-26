@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import AutoRefresh from "./AutoRefresh";
 
 type LatestRow = {
@@ -34,10 +36,14 @@ type RoomGroup = {
 };
 
 async function getLatest(): Promise<LatestRow[]> {
-  const base = process.env.API_INTERNAL_URL || "http://api:8000";
-  const res = await fetch(`${base}/latest?limit=50`, { cache: "no-store" });
-  if (!res.ok) return [];
-  return res.json();
+  const base = process.env.API_INTERNAL_URL || "http://vb-api:8000";
+  try {
+    const res = await fetch(`${base}/latest?limit=50`, { cache: "no-store" });
+    if (!res.ok) return [];
+    return res.json();
+  } catch {
+    return [];
+  }
 }
 
 function secondsSince(ts: string) {
