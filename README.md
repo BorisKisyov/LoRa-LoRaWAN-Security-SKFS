@@ -1,6 +1,6 @@
 # SKFS LoRaWAN Security Lab
 
-This repository is prepared so a professor can download it directly from GitHub and start the demo with one command.
+This repository is prepared so you can download it directly from GitHub and start the demo with one command.
 
 ## Default plug-and-play demo
 
