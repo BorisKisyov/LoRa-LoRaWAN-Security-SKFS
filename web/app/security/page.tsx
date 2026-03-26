@@ -156,7 +156,6 @@ export default async function SecurityPage() {
     <div style={{ padding: 20, display: "grid", gap: 18 }}>
       <AutoRefresh intervalMs={10000} />
 
-      <div style={{ fontSize: 12, color: "#6b7280" }}>Auto-refresh every 10 seconds</div>
 
       <section style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
         {metricCard("Total security events", summary.total_events)}

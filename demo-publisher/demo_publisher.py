@@ -1,6 +1,7 @@
 import base64
 import json
 import os
+import random
 import time
 import uuid
 from datetime import datetime, timezone
@@ -19,12 +20,16 @@ DEMO_TENANT_NAME = os.getenv("DEMO_TENANT_NAME", "Demo Tenant")
 DEMO_APPLICATION_NAME = os.getenv("DEMO_APPLICATION_NAME", "Demo Application")
 DEMO_GATEWAY_ID = os.getenv("DEMO_GATEWAY_ID", "demo-gateway-0001")
 DEMO_ATTACKS_ENABLED = os.getenv("DEMO_ATTACKS_ENABLED", "true").lower() == "true"
-DEMO_ATTACK_EVERY_N_BATCHES = max(1, int(os.getenv("DEMO_ATTACK_EVERY_N_BATCHES", "4")))
+DEMO_ATTACK_MIN_INTERVAL = int(os.getenv("DEMO_ATTACK_MIN_INTERVAL", "15"))
+DEMO_ATTACK_MAX_INTERVAL = int(os.getenv("DEMO_ATTACK_MAX_INTERVAL", "30"))
 DEMO_STATUS_EVERY_N_BATCHES = max(1, int(os.getenv("DEMO_STATUS_EVERY_N_BATCHES", "2")))
 DEMO_ACK_EVERY_N_BATCHES = max(1, int(os.getenv("DEMO_ACK_EVERY_N_BATCHES", "3")))
 DEMO_STARTUP_DELAY = int(os.getenv("DEMO_STARTUP_DELAY", "10"))
 DEMO_API_WAIT_TIMEOUT = int(os.getenv("DEMO_API_WAIT_TIMEOUT", "180"))
 DEMO_MQTT_WAIT_TIMEOUT = int(os.getenv("DEMO_MQTT_WAIT_TIMEOUT", "180"))
+
+if DEMO_ATTACK_MIN_INTERVAL > DEMO_ATTACK_MAX_INTERVAL:
+    DEMO_ATTACK_MIN_INTERVAL, DEMO_ATTACK_MAX_INTERVAL = DEMO_ATTACK_MAX_INTERVAL, DEMO_ATTACK_MIN_INTERVAL
 
 session = requests.Session()
 
@@ -233,6 +238,10 @@ def inject_attack_cycle(client: mqtt.Client, device: Dict) -> None:
     print(f"[demo-publisher] injected demo attack set for {device['dev_eui']}")
 
 
+def next_attack_delay() -> int:
+    return random.randint(DEMO_ATTACK_MIN_INTERVAL, DEMO_ATTACK_MAX_INTERVAL)
+
+
 def main() -> None:
     wait_for_http(f"{API_BASE}/health", DEMO_API_WAIT_TIMEOUT)
     wait_for_mqtt(MQTT_HOST, MQTT_PORT, DEMO_MQTT_WAIT_TIMEOUT)
@@ -250,6 +259,8 @@ def main() -> None:
         dev_eui = make_dev_eui(i)
         dev_addr = f"{0x01000000 + i:08x}"
         devices.append({"dev_eui": dev_eui, "dev_addr": dev_addr, "fcnt": 0, "last_up_payload": None})
+
+    next_attack_at = time.monotonic() + next_attack_delay()
 
     try:
         for device in devices:
@@ -269,16 +280,34 @@ def main() -> None:
                 device["last_up_payload"] = up_payload
 
                 if batch_no % DEMO_STATUS_EVERY_N_BATCHES == 0:
-                    publish_status(client, device["dev_eui"], battery_level=max(5.0, round(battery_v / 3.6 * 100, 1)), margin=max(3, int(round(snr + 4))))
+                    publish_status(
+                        client,
+                        device["dev_eui"],
+                        battery_level=max(5.0, round(battery_v / 3.6 * 100, 1)),
+                        margin=max(3, int(round(snr + 4))),
+                    )
+
                 if batch_no % DEMO_ACK_EVERY_N_BATCHES == 0:
                     publish_ack(client, device["dev_eui"], acknowledged=True, f_cnt_down=device["fcnt"])
 
-            if DEMO_ATTACKS_ENABLED and batch_no % DEMO_ATTACK_EVERY_N_BATCHES == 0:
-                target = devices[((batch_no // DEMO_ATTACK_EVERY_N_BATCHES) - 1) % len(devices)]
-                inject_attack_cycle(client, target)
-
             print(f"[demo-publisher] published batch {batch_no} at {iso_now()}")
-            time.sleep(DEMO_PUBLISH_INTERVAL)
+
+            cycle_end = time.monotonic() + DEMO_PUBLISH_INTERVAL
+            while True:
+                now = time.monotonic()
+
+                if DEMO_ATTACKS_ENABLED and now >= next_attack_at:
+                    target = random.choice(devices)
+                    inject_attack_cycle(client, target)
+                    delay = next_attack_delay()
+                    next_attack_at = now + delay
+                    print(f"[demo-publisher] next attack scheduled in {delay}s")
+
+                remaining = cycle_end - now
+                if remaining <= 0:
+                    break
+
+                time.sleep(min(1.0, remaining))
     finally:
         client.loop_stop()
         client.disconnect()
