@@ -1,4 +1,4 @@
-export const metadata = { title: "VisionByte LoRaWAN Security Lab" };
+export const metadata = { title: "SKFS LoRaWAN Security Lab" };
 
 function navLink(href: string) {
   return {
@@ -29,7 +29,7 @@ export default function RootLayout({ children }) {
         >
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 16, flexWrap: "wrap" }}>
             <div>
-              <div style={{ fontSize: 20, fontWeight: 800 }}>VisionByte LoRaWAN Security Lab</div>
+              <div style={{ fontSize: 20, fontWeight: 800 }}>SKFS LoRaWAN Security Lab</div>
               <div style={{ fontSize: 13, color: "#6b7280" }}>Dashboard + ChirpStack reference + virtual security test bench</div>
             </div>
             <nav style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>

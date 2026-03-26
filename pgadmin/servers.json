@@ -1,0 +1,16 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "SKFS DB",
+      "Group": "SKFS",
+      "Host": "vb-db",
+      "Port": 5432,
+      "MaintenanceDB": "visionbyte",
+      "Username": "postgres",
+      "ConnectionParameters": {
+        "sslmode": "prefer",
+        "connect_timeout": 10
+      }
+    }
+  }
+}

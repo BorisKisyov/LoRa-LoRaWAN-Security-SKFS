@@ -18,19 +18,20 @@ services:
       retries: 15
 
   vb-pgadmin:
-    image: dpage/pgadmin4:latest
-    pull_policy: always
-    restart: unless-stopped
+    build:
+      context: ./pgadmin
     environment:
-      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL:-admin@visionbyte.com}
-      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD:-admin}
+      PGADMIN_DEFAULT_EMAIL: admin@skfs.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+      PGADMIN_SERVER_JSON_FILE: /pgadmin4/servers.json
+      PGADMIN_REPLACE_SERVERS_ON_STARTUP: "True"
+      PGPASS_FILE: /pgpass
     ports:
       - "5050:80"
     volumes:
       - vb_pgadmin:/var/lib/pgadmin
     depends_on:
-      vb-db:
-        condition: service_healthy
+      - vb-db
 
   chirpstack-mosquitto:
     image: eclipse-mosquitto:2
@@ -207,4 +208,5 @@ volumes:
   vb_pgadmin:
   chirpstack_postgres:
   chirpstack_redis:
+
 

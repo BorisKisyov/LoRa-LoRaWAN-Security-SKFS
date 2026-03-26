@@ -109,6 +109,18 @@ function formatMetric(value?: number | null, decimals = 0) {
   return value.toFixed(decimals);
 }
 
+function compactDisplayId(value?: string | null) {
+  if (!value) return "-";
+  const v = String(value);
+
+  if (/^\d+$/.test(v)) {
+    const trimmed = v.replace(/^0+/, "");
+    return trimmed || "0";
+  }
+
+  return v.replace(/(^|\D)0+(\d+$)/, "$1$2");
+}
+
 function formatLocalTs(ts: string) {
   const parts = new Intl.DateTimeFormat("en-GB", {
     timeZone: "Europe/Sofia",
@@ -381,7 +393,7 @@ export default async function DevicePage({
         </a>
       </div>
 
-      <h1 style={{ marginBottom: 6 }}>{latest?.device_name || device_eui}</h1>
+      <h1 style={{ marginBottom: 6 }}>{compactDisplayId(latest?.device_name || device_eui)}</h1>
 
       <div style={{ fontSize: 13, color: "#555", marginBottom: 18 }}>
         {device_eui}

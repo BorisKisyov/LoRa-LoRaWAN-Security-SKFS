@@ -1,4 +1,4 @@
-# VisionByte database MVP v1
+# SKFS database MVP v1
 
 This stack now includes a real MVP data model for:
 - organizations
@@ -36,7 +36,7 @@ This stack now includes a real MVP data model for:
   "firmware_version": "0.1.0",
   "gateway_eui": "GW-001",
   "gateway_name": "School Gateway",
-  "organization_name": "VisionByte Demo",
+  "organization_name": "SKFS Demo",
   "site_name": "TU Sofia Building A",
   "room_name": "Room 214",
   "battery_type": "2xAA",

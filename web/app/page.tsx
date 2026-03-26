@@ -95,6 +95,18 @@ function formatMetric(value?: number | null, decimals = 0) {
   return value.toFixed(decimals);
 }
 
+function compactDisplayId(value?: string | null) {
+  if (!value) return "-";
+  const v = String(value);
+
+  if (/^\d+$/.test(v)) {
+    const trimmed = v.replace(/^0+/, "");
+    return trimmed || "0";
+  }
+
+  return v.replace(/(^|\D)0+(\d+$)/, "$1$2");
+}
+
 function metricStyle() {
   return {
     minWidth: 120,
@@ -273,7 +285,7 @@ function getRoomSummary(group: RoomGroup) {
     warningCount,
     offlineCount,
     deviceCount: group.devices.length,
-    worstDevice: worstDevice?.device_name || worstDevice?.device_eui || "-",
+    worstDevice: compactDisplayId(worstDevice?.device_name || worstDevice?.device_eui),
   };
 }
 
@@ -309,11 +321,8 @@ function DeviceCard({ m }: { m: LatestRow }) {
               href={`/devices/${encodeURIComponent(m.device_eui)}`}
               style={{ color: "#111827", textDecoration: "none" }}
             >
-              {m.device_name || m.device_eui}
+              {compactDisplayId(m.device_name || m.device_eui)}
             </a>
-          </div>
-          <div style={{ fontSize: 12, color: "#666", marginTop: 4 }}>
-            {m.device_eui}
           </div>
         </div>
 
@@ -383,7 +392,7 @@ export default async function Page() {
 
   return (
     <main style={{ maxWidth: 1280, margin: "0 auto", padding: 16, fontFamily: "Arial" }}>
-      <h1 style={{ marginBottom: 8 }}>VisionByte Dashboard (Local)</h1>
+      <h1 style={{ marginBottom: 8 }}>SKFS Dashboard (Local)</h1>
 
       <p style={{ fontSize: 12, color: "#555", marginTop: 0 }}>
         API docs: <a href="http://localhost:8000/docs">http://localhost:8000/docs</a>

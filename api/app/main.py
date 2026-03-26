@@ -14,7 +14,7 @@ from pydantic import AliasChoices, BaseModel, ConfigDict, Field, model_validator
 
 from app.raw_lora_secure_demo import run_demo
 
-app = FastAPI(title="VisionByte LoRaWAN Security API", version="1.0.0")
+app = FastAPI(title="SKFS LoRaWAN Security API", version="1.0.0")
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",
@@ -43,7 +43,7 @@ class MeasurementIn(BaseModel):
     firmware_version: Optional[str] = None
     gateway_eui: Optional[str] = None
     gateway_name: Optional[str] = None
-    organization_name: str = "VisionByte Demo"
+    organization_name: str = "SKFS Demo"
     site_name: str = "Main Site"
     room_name: str = "Unassigned"
     device_name: Optional[str] = None

@@ -1,4 +1,4 @@
-# VisionByte LoRaWAN Security Lab
+# SKFS LoRaWAN Security Lab
 
 This repository is prepared so a professor can download it directly from GitHub and start the demo with one command.
 
@@ -7,8 +7,8 @@ This repository is prepared so a professor can download it directly from GitHub 
 The default stack does **not** require ChirpStack credentials or manual Python scripts.
 
 It starts automatically:
-- VisionByte API
-- VisionByte web dashboard
+- SKFS API
+- SKFS web dashboard
 - PostgreSQL / TimescaleDB
 - pgAdmin
 - Mosquitto MQTT broker
@@ -30,7 +30,7 @@ Then open:
 - pgAdmin: `http://localhost:5050`
 
 Default pgAdmin login:
-- email: `admin@visionbyte.com`
+- email: `admin@skfs.local`
 - password: `admin`
 
 ## Fresh GitHub download
@@ -104,7 +104,7 @@ docker compose logs -f vb-web
 ## Notes for the report
 
 This package demonstrates two security layers:
-- event-driven LoRaWAN-style security monitoring in the VisionByte stack
+- event-driven LoRaWAN-style security monitoring in the SKFS stack
 - raw LoRa AES + MIC + replay logic at `GET /security/raw-demo`
 
 It is a controlled lab simulation, not SDR/RF-layer testing.

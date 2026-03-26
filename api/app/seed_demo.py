@@ -19,9 +19,9 @@ SOFIA_TZ = ZoneInfo("Europe/Sofia")
 
 DEVICES = [
     {
-        "device_eui": "VB-DEMO-001",
+        "device_eui": "SKFS-DEMO-001",
         "device_name": "VB Lab 1 Sensor A",
-        "organization_name": "VisionByte",
+        "organization_name": "SKFS",
         "site_name": "Sofia Office",
         "room_name": "Lab 1",
         "gateway_eui": "GW-001",
@@ -37,9 +37,9 @@ DEVICES = [
         "battery_start": 3.61,
     },
     {
-        "device_eui": "VB-DEMO-002",
+        "device_eui": "SKFS-DEMO-002",
         "device_name": "VB Lab 1 Sensor B",
-        "organization_name": "VisionByte",
+        "organization_name": "SKFS",
         "site_name": "Sofia Office",
         "room_name": "Lab 1",
         "gateway_eui": "GW-001",
@@ -55,9 +55,9 @@ DEVICES = [
         "battery_start": 3.58,
     },
     {
-        "device_eui": "VB-DEMO-003",
+        "device_eui": "SKFS-DEMO-003",
         "device_name": "VB Electronics Bench",
-        "organization_name": "VisionByte",
+        "organization_name": "SKFS",
         "site_name": "Sofia Office",
         "room_name": "Lab 2",
         "gateway_eui": "GW-001",
@@ -73,9 +73,9 @@ DEVICES = [
         "battery_start": 3.56,
     },
     {
-        "device_eui": "VB-DEMO-004",
+        "device_eui": "SKFS-DEMO-004",
         "device_name": "VB Open Office Node",
-        "organization_name": "VisionByte",
+        "organization_name": "SKFS",
         "site_name": "Sofia Office",
         "room_name": "Open Office",
         "gateway_eui": "GW-002",
@@ -91,9 +91,9 @@ DEVICES = [
         "battery_start": 3.60,
     },
     {
-        "device_eui": "VB-DEMO-005",
+        "device_eui": "SKFS-DEMO-005",
         "device_name": "VB Conference Room Node",
-        "organization_name": "VisionByte",
+        "organization_name": "SKFS",
         "site_name": "Sofia Office",
         "room_name": "Conference Room",
         "gateway_eui": "GW-002",
